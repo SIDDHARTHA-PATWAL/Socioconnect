@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+</head>
+<body>
+    <h1>User Registration</h1>
+    <form action="/auth/register" method="post" enctype="multipart/form-data">
+        <input type="text" name="firstName" placeholder="Enter your first name">
+        <input type="text" name="lastName" placeholder="Enter your last name">
+        <input type="email" name="email" placeholder="Enter your email">
+        <input type="password" name="password" placeholder="Enter your password">
+        <input type="text" name="location" placeholder="Enter your location">
+        <input type="text" name="occupation" placeholder="Enter your occupation">
+        <input type="file" name="picture" accept="image/*">
+        <!-- "accept" attribute limits file selection to image files -->
+
+        <input type="submit" value="Register">
+    </form>
+</body>
+</html>
