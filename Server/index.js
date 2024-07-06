@@ -10,7 +10,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import multer from "multer";
 import authRoutes from "./routes/auth.js";
-import userRoutes from "./routes/user.js";
+import userRoutes from "./routes/users.js";
 import postRoutes from "./routes/posts.js";
 import { register } from "./Controllers/auth.js";
 import { verifyToken } from "./middleware/auth.js";
@@ -19,30 +19,37 @@ import User from "./models/User.js";
 import Post from "./models/Post.js";
 import {users ,posts} from "./data/index.js"
 
+
+// CONFIGURATIONS
 const app =express();
 // const port =3000;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 dotenv.config()
-
-app.use((req, res, next) => {
-  const clientIP = req.ip || req.connection.remoteAddress;
-  console.log(`Request from IP: ${clientIP}`);
-  next();
-});
+app.use(express.json());
+app.use(helmet());
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+app.use(morgan("common"));
+app.use(bodyParser.json({ limit: "30mb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
+app.use(cors());
+app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
 // Use core middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({limit:"30mb", extended: true }));
-app.use("/public/assets",express.static(path.join(__dirname+"public/assets")));
-app.use(morgan("tiny"));
-app.use(helmet());
-// app.use(helmet.crossOriginResourcePolicy({policy:crossOriginResourcePolicy}));
-// app.use((req, res, next) => {
-//     console.log("Request Headers:", req.headers);
-//     next();
-// });
-app.use(cors());
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({limit:"30mb", extended: true }));
+// app.use("/assets",express.static(path.join(__dirname+"public/assets")));
+// app.use(morgan("tiny"));
+// app.use(helmet());
+// app.use(cors());
 
+// app.use((req, res, next) => {
+//   const clientIP = req.ip || req.connection.remoteAddress;
+//   console.log(`Request from IP: ${clientIP}`);
+//   next();
+// });
+
+
+// STORAGE
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, 'public/assets') // Destination folder for uploaded files
@@ -78,18 +85,7 @@ mongoose.connect(process.env.mongoURL,{
     app.listen(PORT,()=> console.log(`Sever running on Port ${PORT}`));
 
     // ADD DATA ONE TIME ONLY
-    User.insertMany(users);
-    Post.insertMany(posts);
+    // User.insertMany(users);
+    // Post.insertMany(posts);
 })
 .catch((error)=>console.log(`${error} did not connect`));
-
-// app.listen(PORT,()=>{
-//   console.log("sever on port 45")
-// })
-  
-
-
-
-// app.listen(port, ()=>{
-//     console.log(`Server running at port ${port}"`)
-// });
