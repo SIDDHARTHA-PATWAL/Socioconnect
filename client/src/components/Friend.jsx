@@ -69,7 +69,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
         </Box>
       </FlexBetween>
       {
-       ((!userId || _id=== userId ) && _id!=friendId)? // if ((userId is not defined (url is /home or not applicable)
+       ((!userId || _id=== userId ) && _id!==friendId)? // if ((userId is not defined (url is /home or not applicable)
                                                       //  || the loggined user is seeing his friends) && (if the loggined user is not the potetial friend itself))
                                                       //  then only show the add freind or remove icon button
 
