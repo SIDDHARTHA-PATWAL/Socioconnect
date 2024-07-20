@@ -67,17 +67,18 @@ app.post("/posts",verifyToken,upload.single("picture"),createPost);
 // ROUTES
 app.use("/auth",authRoutes);
 app.use("/users",userRoutes);
-app.use("posts",postRoutes);
+app.use("/posts",postRoutes);
 
-app.get("/",(req,res)=>{
-  res.sendFile(__dirname+"/index.html");
+// API check
+app.get("/ping", (req, res) => {
+  res.send("pong");
 });
 
 
 
 //   Mongoose setup
-const PORT= process.env.port ||6001;
-mongoose.connect(process.env.mongoURL,{
+const PORT= process.env.PORT ||6001;
+mongoose.connect(process.env.MONGO_URL,{
     useNewUrlParser:true,
     useUnifiedTopology:true,
 })
