@@ -42,12 +42,14 @@ export const register = async(req,res)=>{
 // LOGGING IN
 export const login =async(req,res)=>{
     try{
-        const{
-            email,
-            password
-        }=req.body;
-        const user= await User.findOne({email:email});
-        if(!user) return res.status(400).json({msg:"user does not exist"});
+        const { email, password } = req.body;
+
+        // Convert email to lowercase
+        const email_lowercase = email.toLowerCase();
+
+        const user = await User.findOne({ email: email_lowercase });
+        if (!user) return res.status(400).json({ msg: "User does not exist" });
+        
         // const salt=await bcrypt.genSalt();
         const isMatch = await bcrypt.compare(password,user.password);
         if(!isMatch) return res.status(400).json({msg:"invalid credentials"});
