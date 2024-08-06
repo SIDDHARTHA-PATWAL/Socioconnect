@@ -17,7 +17,8 @@ import { verifyToken } from "./middleware/auth.js";
 import { createPost } from "./Controllers/posts.js";
 import User from "./models/User.js";
 import Post from "./models/Post.js";
-import {users ,posts} from "./data/index.js"
+import {users ,posts} from "./data/index.js";
+import { storage } from "./cloudinary/index.js";
 
 
 // CONFIGURATIONS
@@ -50,14 +51,14 @@ app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
 
 // STORAGE
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'public/assets') // Destination folder for uploaded files
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname) // File name
-    }
-  });
+// const storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       cb(null, 'public/assets') // Destination folder for uploaded files
+//     },
+//     filename: function (req, file, cb) {
+//       cb(null, file.originalname) // File name
+//     }
+//   });
 const upload = multer({ storage: storage });
 
 // ROUTES WITH FILES
