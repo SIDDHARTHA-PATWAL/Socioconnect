@@ -33,6 +33,16 @@ export const getUserFriends= async(req,res)=>{
     }
 };
 
+export const getSearchUsers = async(req,res)=>{
+    try{
+        const user = await User.find();
+        res.status(200).json(user); //200 represents successful request
+    }catch(err){
+        res.status(404).json({message:err.message});
+    }
+}
+
+
 // UPDATE
 
 export const addRemoveFriend=async(req,res)=>{
