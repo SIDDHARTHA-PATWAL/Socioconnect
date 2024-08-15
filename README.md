@@ -1,2 +1,2 @@
-# Socialconnect
-A social media web app
+# Socioconnect
+A social media MERN STACK web app
