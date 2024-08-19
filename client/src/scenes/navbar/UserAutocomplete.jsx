@@ -41,7 +41,7 @@ const UserAutocomplete = () => {
   const handleChange = (event, value) => {
     if (value && value._id) {
       navigate(`/profile/${value._id}`);
-      navigate(0)
+      // navigate(0)
     }
   };
 
