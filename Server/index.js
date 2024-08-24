@@ -20,6 +20,11 @@ import Post from "./models/Post.js";
 import {users ,posts} from "./data/index.js";
 import { storage } from "./cloudinary/index.js";
 
+import http from "http"; // Import http for creating a server
+import { Server } from "socket.io"; // Import Server from socket.io
+import Chat from "./models/Chat.js";
+import chatRoutes from "./routes/chats.js"
+
 
 // CONFIGURATIONS
 const app =express();
@@ -69,6 +74,7 @@ app.post("/posts",verifyToken,upload.single("picture"),createPost);
 app.use("/auth",authRoutes);
 app.use("/users",userRoutes);
 app.use("/posts",postRoutes);
+app.use("/chats",chatRoutes);
 
 // API check
 app.get("/ping", (req, res) => {
@@ -84,10 +90,68 @@ mongoose.connect(process.env.MONGO_URL,{
     useUnifiedTopology:true,
 })
 .then(()=>{
-    app.listen(PORT,()=> console.log(`Sever running on Port ${PORT}`));
+  const server = http.createServer(app);
+
+  // Create Socket.IO server and attach it to the HTTP server
+  const io = new Server(server, {
+      cors: {
+          origin: "*", // Adjust this as needed
+      },
+  });
+
+  // Handle Socket.IO connections
+  let users = {}; // Store connected users
+
+  io.on("connection", (socket) => {
+      console.log("A user connected");
+
+      // Register user
+      socket.on("register", (userId) => {
+          users[userId] = socket.id;
+          console.log("Registered user:", userId);
+      });
+
+   // Handle private messages
+      socket.on("private_message", async(message) => {
+          const { from, to, text, timestamp } = message;
+
+          // Save message to the database
+          try {
+              const chatMessage = new Chat({
+                  from,
+                  to,
+                  text,
+                  timestamp: timestamp || Date.now(), // If no timestamp is sent, use the current time
+              });
+              await chatMessage.save();
+
+              // Send the message to the recipient
+              const recipientSocketId = users[to];
+              if (recipientSocketId) {
+                  io.to(recipientSocketId).emit('private_message', message);
+              }
+          } catch (error) {
+              console.error('Error saving message:', error);
+          }
+    });
+
+      socket.on("disconnect", () => {
+          for (let userId in users) {
+              if (users[userId] === socket.id) {
+                  delete users[userId];
+                  break;
+              }
+          }
+          console.log("User disconnected");
+      });
+  });
+  
+    server.listen(PORT,()=> console.log(`Sever running on Port ${PORT}`));
 
     // ADD DATA ONE TIME ONLY
     // User.insertMany(users);
     // Post.insertMany(posts);
 })
 .catch((error)=>console.log(`${error} did not connect`));
+
+
