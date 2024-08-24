@@ -24,7 +24,7 @@ export const register = async(req,res)=>{
             lastName,
             email,
             password:passwordHash,
-            picturePath :  req.file.path,
+            picturePath :  req.file.path || 'https://res.cloudinary.com/dgvczpz0t/image/upload/v1724495217/deafult-avatar_ljxviu.jpg',
             friends,
             location,
             occupation,
